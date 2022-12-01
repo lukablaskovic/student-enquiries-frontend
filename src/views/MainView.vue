@@ -115,7 +115,7 @@ export default {
       sorted_data[1].color = "orange";
       sorted_data[2].color = "red";
       sorted_data[3].color = "red";
-
+      sorted_data[4].color = "red";
       return sorted_data;
     },
   },
