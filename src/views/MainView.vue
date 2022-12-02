@@ -2,7 +2,7 @@
   <v-container>
     <v-row class="text-center">
       <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3 text-gray-700">
+        <h1 class="display-2 font-weight-bold mb-3 text-zinc-700">
           Student enquiries classificator
         </h1>
 
@@ -16,6 +16,7 @@
             auto-grow>
           </v-textarea>
         </v-container>
+
         <v-tooltip bottom v-if="!request">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -23,7 +24,7 @@
               fab
               dark
               small
-              color="primary"
+              color="#73d1f4"
               @click="sendInquiry"
               v-bind="attrs"
               v-on="on">
@@ -32,32 +33,23 @@
           </template>
           <span>Pošalji upit</span>
         </v-tooltip>
+
         <v-progress-circular
           v-if="request"
           indeterminate
           color="primary"></v-progress-circular>
 
-        <v-container class="w-1/2 mt-6 max-w-md">
-          <v-simple-table dense fixed-header>
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left">Topic</th>
-                  <th class="text-left">Similarity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="topic in topics" :key="topic.name">
-                  <td>{{ topic.topic }}</td>
-                  <td>
-                    <v-chip :color="topic.color">
-                      {{ topic.similarity }}
-                    </v-chip>
-                  </td>
-                </tr>
-              </tbody>
+        <v-container class="mt-6 max-w-fit">
+          <v-data-table
+            :headers="tableHeaders"
+            :items="tableSentences"
+            class="elevation-1">
+            <template v-slot:item.calories="{ item }">
+              <v-chip :color="'red'" dark>
+                {{ item.calories }}
+              </v-chip>
             </template>
-          </v-simple-table>
+          </v-data-table>
         </v-container>
       </v-col>
     </v-row>
@@ -77,39 +69,104 @@
 </template>
 
 <script>
+/*
+Pozdrav, kako da upišem drugu godinu informatike? Dodatno, koja je cijena upisnine ako nisam prošao 1 predmet od 6 ECTS bodova?
+*/
 import NLP from "@/services/index";
 export default {
   name: "Main",
 
   data: () => ({
     inquiry: "",
-    topics: [],
+
     request: false,
+    received_data: [],
+
+    ///
+    tableHeaders: [
+      {
+        text: "Sentence",
+        align: "start",
+        sortable: false,
+        value: "name",
+      },
+    ],
+    tableSentences: [],
+
+    ///
   }),
 
   methods: {
+    //Send Inquiry to backend NLP processor
     async sendInquiry() {
+      if (this.inquiry == "" || this.inquiry.length < 20) {
+        alert("Molimo unesite ispravan upit!");
+        return;
+      }
+
       this.request = true;
-      this.topics = [];
+      this.received_data = [];
+
       let data = {
         text: this.inquiry,
       };
-      let result = await NLP.sendInquiry(data);
 
-      let sorted_data = this.sortBySimilarity(result);
-      let final_data = this.setColors(sorted_data);
+      let result_data = await NLP.sendInquiry(data);
 
-      this.topics = final_data;
+      console.log(result_data);
+      this.addTableHeaders(result_data);
+      this.addTableSentences(result_data);
 
       this.request = false;
-      console.log(this.topics);
     },
+
+    addTableHeaders(data) {
+      let categories = data.data[0].categories;
+      categories.forEach((element) => {
+        this.tableHeaders.push({
+          text: element.topic,
+          value: element.topic,
+        });
+      });
+    },
+    addTableSentences(data) {
+      let raw_data = data.data;
+      let tableSentences = [];
+
+      function getSimilarity(categories) {
+        let result = [];
+        categories.forEach((cat) => {
+          result.push({ topic: cat.topic, similarity: cat.similarity });
+        });
+        return result;
+      }
+
+      //Iterate through array of sentences and their categories w/ topics-similarities
+      raw_data.forEach((data) => {
+        //Iterate over each property
+
+        let topics = getSimilarity(data.categories);
+
+        let object = {};
+        topics.forEach((element) => {
+          object[element.topic] = element.similarity;
+        });
+
+        let final_object = Object.assign({ name: data.sentence }, object);
+        tableSentences.push(final_object);
+      });
+      console.log(tableSentences);
+      this.tableSentences = tableSentences;
+    },
+
+    //Sort received data by similarity
     sortBySimilarity(unsorted_data) {
       let sorted_data = unsorted_data.data.sort((a, b) =>
         a.similarity > b.similarity ? -1 : 1
       );
       return sorted_data;
     },
+
     setColors(sorted_data) {
       sorted_data[0].color = "green";
       sorted_data[1].color = "orange";
