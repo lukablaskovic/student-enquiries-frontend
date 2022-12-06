@@ -23,7 +23,7 @@
               fab
               dark
               small
-              color="primary"
+              color="#73d1f4"
               @click="sendInquiry"
               v-bind="attrs"
               v-on="on">
@@ -85,6 +85,8 @@ export default {
     inquiry: "",
     topics: [],
     request: false,
+    rawData: [],
+    answer: "",
   }),
 
   methods: {
@@ -95,14 +97,16 @@ export default {
         text: this.inquiry,
       };
       let result = await NLP.sendInquiry(data);
+      this.rawData = this.result;
 
       let sorted_data = this.sortBySimilarity(result);
       let final_data = this.setColors(sorted_data);
-
       this.topics = final_data;
 
+      result = await NLP.getAnswer(data);
+      this.answer = this.result;
+
       this.request = false;
-      console.log(this.topics);
     },
     sortBySimilarity(unsorted_data) {
       let sorted_data = unsorted_data.data.sort((a, b) =>

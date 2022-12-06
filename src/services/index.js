@@ -1,12 +1,15 @@
 import axios from "axios";
 
 let Service = axios.create({
-  baseURL: "http://192.168.5.24:8080",
-  timeout: 5000,
+  baseURL: "http://localhost:8081",
+  timeout: 30000,
 });
 let NLP = {
   sendInquiry(text) {
     return Service.post("classificator", text);
+  },
+  getAnswer(text) {
+    return Service.post("answer", text);
   },
 };
 export default NLP;
