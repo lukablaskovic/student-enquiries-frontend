@@ -61,17 +61,25 @@
         </v-container>
       </v-col>
     </v-row>
-
-    <v-row>
-      <v-footer class="mb-1" color="white" padless bottom absolute>
-        <v-row justify="center" no-gutters>
-          <v-img
-            max-height="350"
-            max-width="400"
-            :src="require('@/assets/fipu_hr.png')">
-          </v-img>
-        </v-row>
-      </v-footer>
+    <v-row class="text-center">
+      <v-container class="w-1/2 md:mx-auto">
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">Questions</th>
+                <th class="text-left">Best Answer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in bestAnswers" :key="item.question">
+                <td>{{ item.question }}</td>
+                <td>{{ item.answer }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-container>
     </v-row>
   </v-container>
 </template>
@@ -87,24 +95,29 @@ export default {
     request: false,
     rawData: [],
     answer: "",
+    bestAnswers: [],
   }),
 
   methods: {
     async sendInquiry() {
       this.request = true;
       this.topics = [];
+      this.bestAnswers = [];
       let data = {
         text: this.inquiry,
       };
+
       let result = await NLP.sendInquiry(data);
       this.rawData = this.result;
+      console.log(result);
 
       let sorted_data = this.sortBySimilarity(result);
       let final_data = this.setColors(sorted_data);
       this.topics = final_data;
 
-      result = await NLP.getAnswer(data);
-      this.answer = this.result;
+      let result2 = await NLP.getPredefinedAnswer(data);
+      console.log(result2);
+      this.addAnswersToTable(result2);
 
       this.request = false;
     },
@@ -113,6 +126,14 @@ export default {
         a.similarity > b.similarity ? -1 : 1
       );
       return sorted_data;
+    },
+    addAnswersToTable(answerResults) {
+      answerResults.data.forEach((element) => {
+        this.bestAnswers.push({
+          question: element["question"],
+          answer: element["answer"],
+        });
+      });
     },
     setColors(sorted_data) {
       sorted_data[0].color = "green";

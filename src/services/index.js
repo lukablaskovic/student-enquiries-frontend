@@ -11,5 +11,8 @@ let NLP = {
   getAnswer(text) {
     return Service.post("answer", text);
   },
+  getPredefinedAnswer(text) {
+    return Service.post("predefined-answer", text);
+  },
 };
 export default NLP;
