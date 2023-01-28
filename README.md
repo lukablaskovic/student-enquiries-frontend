@@ -1,20 +1,29 @@
-# student-enquiries-frontend
-Interface for student-enquiries-classification application
+# "Student Enquiries Classifier"
 
-## Project setup
-```
-npm install
-```
+Interface for student-enquiries-classification application used for classifying student enquiries in predefined classes.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### Link to the app
+- link
 
-### Compiles and minifies for production
-```
-npm run build
-```
+### Authors and assignments
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+-   Luka Blašković (lblaskovi@student.unipu.hr)
+
+### Prototype
+- 
+
+### Short description of available functionalities
+- 
+-
+-
+
+### Youtube video
+
+[URL text](VIDEO URL)
+
+### Organization
+
+[Juraj Dobrila University of Pula](http://www.unipu.hr/)  
+[Pula Faculty of Informatics](https://fipu.unipu.hr/)  
+Course: **Distributed Systems**, Academic Year 2022./2023.  
+Mentor: **Nikola Tanković** (https://fipu.unipu.hr/fipu/nikola.tankovic, nikola.tankovic@unipu.hr)
