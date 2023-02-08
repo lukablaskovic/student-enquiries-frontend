@@ -20,3 +20,8 @@ Users (students) can input their questions in Croatian language. The classifier 
 [Pula Faculty of Informatics](https://fipu.unipu.hr/)  
 Course: **Distributed Systems**, Academic Year 2022./2023.  
 Mentor: **Nikola Tanković** (https://fipu.unipu.hr/fipu/nikola.tankovic, nikola.tankovic@unipu.hr)
+
+### Screenshots
+
+![stud enquiries frontend](https://github.com/lukablaskovic/student-enquiries-frontend/blob/main/screenshots/interface.png?raw=true)
+
